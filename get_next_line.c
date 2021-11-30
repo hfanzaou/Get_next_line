@@ -26,21 +26,37 @@ char	*get_next_line(int fd)
 	t = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!t)
 		return (0);
-	while (ft_cmp(c, '\n') && i != 0)
+	i = read(fd, t, BUFFER_SIZE);
+	if(i <= 0)
+	{
+		free(t);
+		return (NULL);
+	}
+	c = ft_strjoin(c, t);
+	if(*c == '\0')
+	{
+		free(t);
+		free(c);
+		return (NULL);
+	}
+	while (ft_cmp(c, '\n') && i > 0)
 	{
 		i = read(fd, t, BUFFER_SIZE);
-		if (i == -1)
+		if (i < 0)
 		{
+			free(t);
+			free(c);
 			return NULL; 
 		}
 		t[i] = '\0';
 		c = ft_strjoin(c, t);
-		
 	}
 	free(t);
 	j = 0;
 	while (c[j] && c[j] != '\n')
 		j++;
+	if (c[0] == '\n')
+		j++;	
 	l = malloc(sizeof(char) * (j + 1));
 	if(!l)
 		return 0;
@@ -50,16 +66,23 @@ char	*get_next_line(int fd)
 		l[j] = *c++;
 		j++;
 	}
-	c++;
+	if (*c == '\n')
+	{
+		free(c);
+		l[j++] = '\n';
+	}
+	else
+		c++;
 	l[j] = '\0';
 	return l;	
 }
-
+/*
 int main()
 {
 	int fd = open("text.txt", O_RDWR);
-	printf("%s", get_next_line(fd));
+	printf("%s\n", get_next_line(fd));
 	printf("%s\n", get_next_line(fd));
 	printf("%s\n", get_next_line(fd));
 	printf("%s\n", get_next_line(fd));
 }
+*/
