@@ -13,76 +13,116 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-char	*get_next_line(int fd)
+char 	*get_alloc(int i)
 {
-	static char *c = "";
-	char *l;
-	char *t;
-	int i;
-	int j;
+	char *c;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return NULL;
-	t = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!t)
-		return (0);
-	i = read(fd, t, BUFFER_SIZE);
-	if(i <= 0)
-	{
-		free(t);
+	c = malloc(sizeof(char) * (i + 1));
+	if (!c)
 		return (NULL);
-	}
-	c = ft_strjoin(c, t);
-	if(*c == '\0')
+	return (c);	
+}
+
+char	*get_read(char *c, int fd)
+{
+	int i;
+	char *t;
+
+	if (!c)
 	{
-		free(t);
-		free(c);
-		return (NULL);
+		c = get_alloc(1);
+		*c = '\0';
 	}
+	t = get_alloc(BUFFER_SIZE);
+	i = 1;
 	while (ft_cmp(c, '\n') && i > 0)
 	{
 		i = read(fd, t, BUFFER_SIZE);
-		if (i < 0)
+		if (i < 0 || (!i && !*t))
 		{
 			free(t);
 			free(c);
-			return NULL; 
+			return (NULL);
 		}
 		t[i] = '\0';
 		c = ft_strjoin(c, t);
 	}
 	free(t);
-	j = 0;
-	while (c[j] && c[j] != '\n')
-		j++;
-	if (c[0] == '\n')
-		j++;	
-	l = malloc(sizeof(char) * (j + 1));
-	if(!l)
-		return 0;
-	j = 0;
-	while (*c && *c != '\n')			
-	{
-		l[j] = *c++;
-		j++;
-	}
-	if (*c == '\n')
+	return (c);
+}
+char	*get_line(char *c)
+{
+	int i;
+	char *l;
+
+	i = 0;
+	if (!*c)
 	{
 		free(c);
-		l[j++] = '\n';
+		return (ft_strdup("\0"));
 	}
-	else
-		c++;
-	l[j] = '\0';
-	return l;	
+	else if (*c == '\n')
+	{
+		return (ft_strdup("\n"));
+	}
+	while (c[i] && c[i] != '\n')
+		i++;	
+	l = get_alloc(i);
+	i = 0;
+	while (c[i])
+	{
+		l[i] = c[i];
+		i++;
+		if (c[i - 1] == '\n')
+			break;
+	}
+	l[i] = '\0';
+	return (l);
 }
-/*
+
+char	*get_save(char *c)
+{
+	int i;
+	char *s;
+
+	i = 0;
+	if (!*c)
+	{
+		free(c);
+		return (NULL);
+	}
+	while (c[i] && c[i] != '\n')
+		i++;	
+	s = ft_substr(c, i + 1, ft_strlen(c));
+	return (s);
+}
+
+char 	*get_next_line(int fd)
+{
+	static char *c;
+	char *l;
+
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	c = get_read(c, fd);
+	if(!c)
+		return (NULL);
+	l = get_line(c);
+	if (!*l)
+	{
+		free(l);
+		return (NULL);
+	}
+	c = get_save(c);
+	return (l);
+
+}
+
 int main()
 {
 	int fd = open("text.txt", O_RDWR);
 	printf("%s\n", get_next_line(fd));
 	printf("%s\n", get_next_line(fd));
-	printf("%s\n", get_next_line(fd));
-	printf("%s\n", get_next_line(fd));
+	//printf("%s", get_next_line(fd));
+	//get_next_line(fd);
 }
-*/
