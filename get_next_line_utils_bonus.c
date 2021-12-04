@@ -1,15 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hfanzaou <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/28 22:15:34 by hfanzaou          #+#    #+#             */
-/*   Updated: 2021/12/04 22:37:49 by hfanzaou         ###   ########.fr       */
+/*   Created: 2021/12/02 19:26:39 by hfanzaou          #+#    #+#             */
+/*   Updated: 2021/12/04 22:38:10 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "get_next_line.h"
+
+#include "get_next_line_bonus.h"
 
 char	*ft_strjoin(char *s1, char *s2)
 {
@@ -21,8 +22,8 @@ char	*ft_strjoin(char *s1, char *s2)
 		s1 = ft_strdup("\0");
 	i = ft_strlen(s1) + ft_strlen(s2);
 	c = (char *)malloc(sizeof(char) * (i + 1));
-	if (!c)
-		return (NULL);
+	if (c == NULL)
+		return (0);
 	j = 0;
 	while (s1[j])
 	{
@@ -74,7 +75,7 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	if (start >= ft_strlen(s))
 	{
 		free(s);
-		return (NULL);
+		return (ft_strdup("\0"));
 	}
 	if (len > ft_strlen(s))
 		len = ft_strlen(s);

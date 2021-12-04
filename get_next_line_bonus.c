@@ -1,15 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hfanzaou <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/28 02:23:29 by hfanzaou          #+#    #+#             */
-/*   Updated: 2021/12/04 22:37:35 by hfanzaou         ###   ########.fr       */
+/*   Created: 2021/12/02 19:24:58 by hfanzaou          #+#    #+#             */
+/*   Updated: 2021/12/04 22:37:41 by hfanzaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "get_next_line.h"
+
+#include "get_next_line_bonus.h"
 
 char	*read_buff(char *c, int fd)
 {
@@ -81,30 +82,34 @@ char	*save_buff(char *c)
 
 char	*get_next_line(int fd)
 {
-	static char	*c;
+	static char	*c[OPEN_MAX];
 	char		*l;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	c = read_buff(c, fd);
-	if (!c)
+	c[fd] = read_buff(c[fd], fd);
+	if (!c[fd])
 		return (NULL);
-	l = line_buff(c);
+	l = line_buff(c[fd]);
 	if (!*l)
 	{
 		free(l);
 		return (NULL);
 	}
-	c = save_buff(c);
+	c[fd] = save_buff(c[fd]);
 	return (l);
 }
+
 /*
 int main()
 {
-	int fd = open("text.txt", O_RDWR);
-	printf("%s\n", get_next_line(fd));
-	//printf("%s\n", get_next_line(fd));
-	//printf("%s", get_next_line(fd));
-	//get_next_line(fd);
-}
-*/
+	int i[2];
+	i[0] = open("text.txt", O_RDONLY);
+	i[1] = open("text2.txt", O_RDONLY);
+	//printf("%d\n%d\n", i[0], i[1]);
+	printf("%s", get_next_line(i[0]));
+	printf("%s", get_next_line(i[1]));
+	printf("%s\n", get_next_line(i[0]));
+	printf("%s", get_next_line(i[1]));
+	//printf("%s", get_next_line(i));
+}*/
